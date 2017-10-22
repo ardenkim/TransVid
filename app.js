@@ -122,6 +122,10 @@ $(function() {
         document.getElementById("voice_source").setAttribute("src", msURL + "/Speak?appid=Bearer "+ token + "&format=audio/mp3&options=male&language=" + languageTo + "&text=" + translatedScript);
         voice.load();
         voice.play();
+        chrome.tabs.query({active: true, currentWindow: true}, function(tabs) {
+            chrome.tabs.sendMessage(tabs[0].id, {greeting: voice.currentTime.toString()}, null);
+            
+          });
     }
 })
 
