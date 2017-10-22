@@ -1,12 +1,13 @@
 "use strict";
 
 var youtubeUrl = "https://www.youtube.com/watch?v=";
+var youtubeKey = "AIzaSyB3H6Fl0_1fx5DCGMJRBlubT4tSQgnFlOY";
 
-var languageFrom = "fr";
+var languageFrom = "";
 
 var googleUrl = "http://video.google.com/timedtext"; 
 var msURL = "https://api.microsofttranslator.com/V2/Http.svc";
-var token = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzY29wZSI6Imh0dHBzOi8vYXBpLm1pY3Jvc29mdHRyYW5zbGF0b3IuY29tLyIsInN1YnNjcmlwdGlvbi1pZCI6IjY4ZDE3ODQ4YmRiMjRhNDlhZGM0YmE1NjJkOWIxMjVlIiwicHJvZHVjdC1pZCI6IlRleHRUcmFuc2xhdG9yLkYwIiwiY29nbml0aXZlLXNlcnZpY2VzLWVuZHBvaW50IjoiaHR0cHM6Ly9hcGkuY29nbml0aXZlLm1pY3Jvc29mdC5jb20vaW50ZXJuYWwvdjEuMC8iLCJhenVyZS1yZXNvdXJjZS1pZCI6Ii9zdWJzY3JpcHRpb25zLzBkMmZmOThjLTVkYjAtNGZiOC05MmI1LTAxNDU5ZTY3ZGM5Yy9yZXNvdXJjZUdyb3Vwcy9UcmFuc1ZpZC9wcm92aWRlcnMvTWljcm9zb2Z0LkNvZ25pdGl2ZVNlcnZpY2VzL2FjY291bnRzL1RyYW5zVmlkIiwiaXNzIjoidXJuOm1zLmNvZ25pdGl2ZXNlcnZpY2VzIiwiYXVkIjoidXJuOm1zLm1pY3Jvc29mdHRyYW5zbGF0b3IiLCJleHAiOjE1MDg2ODU0MjB9.8QFoEEaM-xCZ2juDC2DRPzLwKdmtTnMF8rKL_WDsKxs";
+var token = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzY29wZSI6Imh0dHBzOi8vYXBpLm1pY3Jvc29mdHRyYW5zbGF0b3IuY29tLyIsInN1YnNjcmlwdGlvbi1pZCI6IjY4ZDE3ODQ4YmRiMjRhNDlhZGM0YmE1NjJkOWIxMjVlIiwicHJvZHVjdC1pZCI6IlRleHRUcmFuc2xhdG9yLkYwIiwiY29nbml0aXZlLXNlcnZpY2VzLWVuZHBvaW50IjoiaHR0cHM6Ly9hcGkuY29nbml0aXZlLm1pY3Jvc29mdC5jb20vaW50ZXJuYWwvdjEuMC8iLCJhenVyZS1yZXNvdXJjZS1pZCI6Ii9zdWJzY3JpcHRpb25zLzBkMmZmOThjLTVkYjAtNGZiOC05MmI1LTAxNDU5ZTY3ZGM5Yy9yZXNvdXJjZUdyb3Vwcy9UcmFuc1ZpZC9wcm92aWRlcnMvTWljcm9zb2Z0LkNvZ25pdGl2ZVNlcnZpY2VzL2FjY291bnRzL1RyYW5zVmlkIiwiaXNzIjoidXJuOm1zLmNvZ25pdGl2ZXNlcnZpY2VzIiwiYXVkIjoidXJuOm1zLm1pY3Jvc29mdHRyYW5zbGF0b3IiLCJleHAiOjE1MDg2ODc5NzF9.1zwnDUQrAWYRSkhHPX-70zdGamfey51FQ60WGr0UyVg";
 
 var languageTo = "en";
 
@@ -15,13 +16,28 @@ chrome.tabs.getSelected(null, function (tab) {
     if (tab.url.includes("youtube.com")) {
         vidId = tab.url.substring(youtubeUrl.length);
         console.log(vidId);
-        loadScript();    
+        getLang();
     } else {
         document.getElementById("voice_source").setAttribute("src", "");        
     }
 });
 
 var request = new XMLHttpRequest();
+
+function getLang() {
+    fetch("https://www.googleapis.com/youtube/v3/captions?part=snippet&videoId=" + vidId + "&key=" + youtubeKey)
+        .then(function (res) {
+            var info = res.json();
+            return info;
+        }).then(function (data) {
+            if (data.items.length > 0) {
+                languageFrom = data.items[0].snippet.language;
+                loadScript();    
+            } else {
+                alert("unable to parse script");
+            }
+    });
+}
 
 function loadScript() {
     request.addEventListener("load", parseScript);
@@ -62,3 +78,6 @@ function voiceOver(script) {
     voice.play();
 }
     
+
+
+
