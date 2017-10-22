@@ -7,13 +7,18 @@
     
     <body>
         <div class="container">
-            <h2>TransVid</h2>
-            <p><input id="voiceOver" type="checkbox" /> Voice Over</p>
-            <select id="lang-option">
-                <option value="select">Select</option>
-            </select>
+            <div class="logo-container">
+                <img src="image/banner.png" class="logo">
+            </div>
+            <div id="selectWrapper">
+                <label>Translate to:</label>
+                <select id="lang-option">
+                    <option value="select">Select</option>
+                </select>
+            </div>
+            <button id="speak">Let's TransVid</button>
         </div>
-        <video controls autoplay name="voice" id="voice">
+        <video autoplay name="voice" id="voice">
             <source id="voice_source" type="audio/mpeg" src=""/>
         </video>
     </body>

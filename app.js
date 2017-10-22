@@ -1,6 +1,5 @@
 "use strict";
 $(function() {
-
     var youtubeUrl = "https://www.youtube.com/watch?v=";
     var youtubeKey = "AIzaSyB3H6Fl0_1fx5DCGMJRBlubT4tSQgnFlOY";
 
@@ -18,10 +17,16 @@ $(function() {
         if (tab.url.startsWith(youtubeUrl)) {
             vidId = tab.url.substring(youtubeUrl.length, tab.url.indexOf('&'));
             console.log(vidId);
-            getToken();
-            getLang();
         } else {
+            vidId = "";
             document.getElementById("voice_source").setAttribute("src", "");        
+        }
+    });
+
+    $("#speak").click(function() {
+        if (vidId.length > 0) {
+            getToken();
+            getLang();    
         }
     });
 
@@ -30,7 +35,6 @@ $(function() {
         languageTo = $(this).val();
     });
 
-    // should be in background
     var availableLang = ["ar", "ar-eg", "ca", "ca-es", "da", "da-dk", "de", "de-de", "en", "en-au", "en-ca", "en-gb", "en-in", "en-us", "es", "es-es", "es-mx", "fi", "fi-fi", "fr", "fr-ca", "fr-fr", "hi", "hi-in", "it", "it-it", "ja", "ja-jp", "ko", "ko-kr", "nb-no", "nl", "nl-nl", "no", "pl", "pl-pl", "pt", "pt-br", "pt-pt", "ru", "ru-ru", "sv", "sv-se", "yue", "zh-chs", "zh-cht", "zh-cn", "zh-hk", "zh-tw"];
     availableLang.forEach(function(w) {
         var e = document.createElement('option');

@@ -1,3 +1,50 @@
+html {
+    height: 100px;
+}
+body {
+    width: 150px;
+}
 .container {
+    font-family: "Helvetica Neue", "Helvetica", "Arial", "sans-serif";
+}
+
+.logo-container {
+    text-align: center;
+    margin-bottom: 10px;
+}
+.logo {
     width: 100px;
+}
+
+p, label, select, option {
+    font-size: 15px;    
+}
+
+.selectWrapper{
+    border-radius: 36px;
+    display: inline-block;
+    overflow: hidden;
+    background: #cccccc;
+    border: 1px solid #777777;
+}
+
+select {
+    width: 100%;
+    height: 25px;
+    outline: none;
+}
+
+#voice {
+    height: 0;
+}
+
+button {
+    width: 100%;
+    height: 25px;
+    margin-top: 5px;
+    margin-bottom: 5px;
+    background-color: #b65454;
+    border: none;   
+    color: white; 
+    font-weight: 450;
 }
