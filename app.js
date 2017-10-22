@@ -1,15 +1,15 @@
 "use strict";
 
-var url = "http://video.google.com/timedtext?lang=fr&v=zCaxXQdkfPk";
+var videoUrl = "http://video.google.com/timedtext?lang=fr&v=zCaxXQdkfPk";
 var msURL = "https://api.microsofttranslator.com/V2/Http.svc";
-var token = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzY29wZSI6Imh0dHBzOi8vYXBpLm1pY3Jvc29mdHRyYW5zbGF0b3IuY29tLyIsInN1YnNjcmlwdGlvbi1pZCI6IjY4ZDE3ODQ4YmRiMjRhNDlhZGM0YmE1NjJkOWIxMjVlIiwicHJvZHVjdC1pZCI6IlRleHRUcmFuc2xhdG9yLkYwIiwiY29nbml0aXZlLXNlcnZpY2VzLWVuZHBvaW50IjoiaHR0cHM6Ly9hcGkuY29nbml0aXZlLm1pY3Jvc29mdC5jb20vaW50ZXJuYWwvdjEuMC8iLCJhenVyZS1yZXNvdXJjZS1pZCI6Ii9zdWJzY3JpcHRpb25zLzBkMmZmOThjLTVkYjAtNGZiOC05MmI1LTAxNDU5ZTY3ZGM5Yy9yZXNvdXJjZUdyb3Vwcy9UcmFuc1ZpZC9wcm92aWRlcnMvTWljcm9zb2Z0LkNvZ25pdGl2ZVNlcnZpY2VzL2FjY291bnRzL1RyYW5zVmlkIiwiaXNzIjoidXJuOm1zLmNvZ25pdGl2ZXNlcnZpY2VzIiwiYXVkIjoidXJuOm1zLm1pY3Jvc29mdHRyYW5zbGF0b3IiLCJleHAiOjE1MDg2NzQ1MDN9.jkmIo3lWsOgFm7wJA3y1u6xlhdkB973iEbu4wiYz3tk";
+var token = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzY29wZSI6Imh0dHBzOi8vYXBpLm1pY3Jvc29mdHRyYW5zbGF0b3IuY29tLyIsInN1YnNjcmlwdGlvbi1pZCI6IjY4ZDE3ODQ4YmRiMjRhNDlhZGM0YmE1NjJkOWIxMjVlIiwicHJvZHVjdC1pZCI6IlRleHRUcmFuc2xhdG9yLkYwIiwiY29nbml0aXZlLXNlcnZpY2VzLWVuZHBvaW50IjoiaHR0cHM6Ly9hcGkuY29nbml0aXZlLm1pY3Jvc29mdC5jb20vaW50ZXJuYWwvdjEuMC8iLCJhenVyZS1yZXNvdXJjZS1pZCI6Ii9zdWJzY3JpcHRpb25zLzBkMmZmOThjLTVkYjAtNGZiOC05MmI1LTAxNDU5ZTY3ZGM5Yy9yZXNvdXJjZUdyb3Vwcy9UcmFuc1ZpZC9wcm92aWRlcnMvTWljcm9zb2Z0LkNvZ25pdGl2ZVNlcnZpY2VzL2FjY291bnRzL1RyYW5zVmlkIiwiaXNzIjoidXJuOm1zLmNvZ25pdGl2ZXNlcnZpY2VzIiwiYXVkIjoidXJuOm1zLm1pY3Jvc29mdHRyYW5zbGF0b3IiLCJleHAiOjE1MDg2Nzk5NTl9.Lp6jrIb2iXgNUhZtMZsyVNtS2FqvESYOLlakWSMvxwU";
 
 var language = "en";
 
 var request = new XMLHttpRequest();
 request.addEventListener("load", loadScript);
 
-request.open("GET", url, true);
+request.open("GET", videoUrl, true);
 request.send();
 
 function htmlDecode(input){
@@ -37,14 +37,10 @@ function translate(data) {
 }
 
 function voiceOver(script) {
-    var mp3 = new XMLHttpRequest();
-    mp3.open("GET", msURL + "/Speak?appid=Bearer "+ token + "&format=audio/mp3&language=" + language + "&text=" + script);
-    mp3.onload = function() {
-        // var audio = new Audio(mp3.response);
-        // audio.play();
-        console.log(mp3.response);
-    };
-    mp3.send();
-
+    var voice = document.getElementById("voice");
+    voice.pause();
+    document.getElementById("voice_source").setAttribute("src", msURL + "/Speak?appid=Bearer "+ token + "&format=audio/mp3&language=" + language + "&text=" + script);
+    voice.load();
+    voice.play();
 }
     
