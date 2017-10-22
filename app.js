@@ -7,7 +7,8 @@ var languageFrom = "";
 
 var googleUrl = "http://video.google.com/timedtext"; 
 var msURL = "https://api.microsofttranslator.com/V2/Http.svc";
-var token = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzY29wZSI6Imh0dHBzOi8vYXBpLm1pY3Jvc29mdHRyYW5zbGF0b3IuY29tLyIsInN1YnNjcmlwdGlvbi1pZCI6IjY4ZDE3ODQ4YmRiMjRhNDlhZGM0YmE1NjJkOWIxMjVlIiwicHJvZHVjdC1pZCI6IlRleHRUcmFuc2xhdG9yLkYwIiwiY29nbml0aXZlLXNlcnZpY2VzLWVuZHBvaW50IjoiaHR0cHM6Ly9hcGkuY29nbml0aXZlLm1pY3Jvc29mdC5jb20vaW50ZXJuYWwvdjEuMC8iLCJhenVyZS1yZXNvdXJjZS1pZCI6Ii9zdWJzY3JpcHRpb25zLzBkMmZmOThjLTVkYjAtNGZiOC05MmI1LTAxNDU5ZTY3ZGM5Yy9yZXNvdXJjZUdyb3Vwcy9UcmFuc1ZpZC9wcm92aWRlcnMvTWljcm9zb2Z0LkNvZ25pdGl2ZVNlcnZpY2VzL2FjY291bnRzL1RyYW5zVmlkIiwiaXNzIjoidXJuOm1zLmNvZ25pdGl2ZXNlcnZpY2VzIiwiYXVkIjoidXJuOm1zLm1pY3Jvc29mdHRyYW5zbGF0b3IiLCJleHAiOjE1MDg2ODc5NzF9.1zwnDUQrAWYRSkhHPX-70zdGamfey51FQ60WGr0UyVg";
+var msKey = "8cabe1d5d90749c0ad5a7b92bfb4754f";
+var token = "";
 
 var languageTo = "en";
 
@@ -16,6 +17,7 @@ chrome.tabs.getSelected(null, function (tab) {
     if (tab.url.includes("youtube.com")) {
         vidId = tab.url.substring(youtubeUrl.length);
         console.log(vidId);
+        getToken();
         getLang();
     } else {
         document.getElementById("voice_source").setAttribute("src", "");        
@@ -23,6 +25,17 @@ chrome.tabs.getSelected(null, function (tab) {
 });
 
 var request = new XMLHttpRequest();
+
+function getToken() {
+    var xhr = new XMLHttpRequest();
+    xhr.open("POST", "https://api.cognitive.microsoft.com/sts/v1.0/issueToken");
+    xhr.setRequestHeader("Ocp-Apim-Subscription-Key", msKey)
+    console.log("HELLO")
+    xhr.onreadystatechange = function() {
+        token = xhr.responseText;
+    }
+    xhr.send();
+}
 
 function getLang() {
     fetch("https://www.googleapis.com/youtube/v3/captions?part=snippet&videoId=" + vidId + "&key=" + youtubeKey)
@@ -40,6 +53,16 @@ function getLang() {
 }
 
 function loadScript() {
+    // Options for language drop down
+    var hello = "ar ar-eg ca ca-es da da-dk de de-de en en-au en-ca en-gb en-in en-us es es-es es-mx fi fi-fi fr fr-ca fr-fr hi hi-in it it-it ja ja-jp ko ko-kr nb-no nl nl-nl no pl pl-pl pt pt-br pt-pt ru ru-ru sv sv-se yue zh-chs zh-cht zh-cn zh-hk zh-tw";
+    var world = hello.split(" ");
+    world.forEach(function(w) {
+        var e = document.createElement('option');
+        e.value = w;
+        e.innerHTML = w;
+        var langOp = document.getElementById("lang-option").appendChild(e);
+    });
+    
     request.addEventListener("load", parseScript);
     
     request.open("GET", googleUrl + "?lang=" + languageFrom + "&v=" + vidId, true);
