@@ -1,6 +1,7 @@
 <html>
     <head>
         <link rel="stylesheet" href="style.css">    
+        <script type="text/javascript" src="jquery.min.js"></script>        
         <script type="text/javascript" src="app.js"></script>
     </head>
     
@@ -8,6 +9,9 @@
         <div class="container">
             <h2>TransVid</h2>
             <p><input id="voiceOver" type="checkbox" /> Voice Over</p>
+            <select id="lang-option">
+                <option value="select">Select</option>
+            </select>
         </div>
         <video controls autoplay name="voice" id="voice">
             <source id="voice_source" type="audio/mpeg" src=""/>
