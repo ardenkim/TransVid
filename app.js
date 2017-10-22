@@ -1,14 +1,15 @@
 "use strict";
-$(function(){
+$(function() {
 
     var youtubeUrl = "https://www.youtube.com/watch?v=";
     var youtubeKey = "AIzaSyB3H6Fl0_1fx5DCGMJRBlubT4tSQgnFlOY";
 
-    var googleapis = "https://www.googleapis.com/youtube/v3/captions"
-    var googleUrl = "http://video.google.com/timedtext"; 
+    var googleApi = "https://www.googleapis.com/youtube/v3/captions"
+    var googleVideoApi = "http://video.google.com/timedtext"; 
     
     var msURL = "https://api.microsofttranslator.com/V2/Http.svc";
     var msKey = "8cabe1d5d90749c0ad5a7b92bfb4754f";
+    var msTokenUrl = "https://api.cognitive.microsoft.com/sts/v1.0/issueToken";
     var token = "";
 
     var languageTo = "en";
@@ -24,11 +25,25 @@ $(function(){
         }
     });
 
+    $("#lang-option").change(function() {
+        console.log($(this).val());
+        languageTo = $(this).val();
+    });
+
+    // should be in background
+    var availableLang = ["ar", "ar-eg", "ca", "ca-es", "da", "da-dk", "de", "de-de", "en", "en-au", "en-ca", "en-gb", "en-in", "en-us", "es", "es-es", "es-mx", "fi", "fi-fi", "fr", "fr-ca", "fr-fr", "hi", "hi-in", "it", "it-it", "ja", "ja-jp", "ko", "ko-kr", "nb-no", "nl", "nl-nl", "no", "pl", "pl-pl", "pt", "pt-br", "pt-pt", "ru", "ru-ru", "sv", "sv-se", "yue", "zh-chs", "zh-cht", "zh-cn", "zh-hk", "zh-tw"];
+    availableLang.forEach(function(w) {
+        var e = document.createElement('option');
+        e.value = w;
+        e.innerHTML = w;
+        var langOp = document.getElementById("lang-option").appendChild(e);
+    });
+    $("#lang-option").val("en");    
 
     function getToken() {
         $.ajax({
             type: "POST",
-            url: "https://api.cognitive.microsoft.com/sts/v1.0/issueToken",
+            url: msTokenUrl,
             headers: {
                 'Ocp-Apim-Subscription-Key':msKey,
             },
@@ -40,7 +55,7 @@ $(function(){
 
     function getLang() {
         $.ajax({
-            url: googleapis,
+            url: googleApi,
             data: {
                 part: "snippet",
                 videoId: vidId,
@@ -54,17 +69,8 @@ $(function(){
     }
 
     function loadScript(languageFrom){
-        var hello = "ar ar-eg ca ca-es da da-dk de de-de en en-au en-ca en-gb en-in en-us es es-es es-mx fi fi-fi fr fr-ca fr-fr hi hi-in it it-it ja ja-jp ko ko-kr nb-no nl nl-nl no pl pl-pl pt pt-br pt-pt ru ru-ru sv sv-se yue zh-chs zh-cht zh-cn zh-hk zh-tw";
-        var world = hello.split(" ");
-        world.forEach(function(w) {
-            var e = document.createElement('option');
-            e.value = w;
-            e.innerHTML = w;
-            var langOp = document.getElementById("lang-option").appendChild(e);
-        });
-
         $.ajax({
-            url: googleUrl,
+            url: googleVideoApi,
             data: {
             lang: languageFrom,
             v: vidId
@@ -105,8 +111,6 @@ $(function(){
         voice.load();
         voice.play();
     }
-
-
 })
 
 
