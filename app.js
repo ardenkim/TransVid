@@ -13,9 +13,17 @@ $(function() {
 
     var languageTo = "en";
     var vidId = "";
+
     chrome.tabs.getSelected(null, function (tab) {
         if (tab.url.startsWith(youtubeUrl)) {
-            vidId = tab.url.substring(youtubeUrl.length, tab.url.indexOf('&'));
+            var query = tab.url.substring(tab.url.indexOf('?')+1);
+            var params = query.split('&')
+            for(var i = 0; i < params.length; i++){
+                var temp = params[i].split('=')
+                if(temp[0]=='v'){
+                    vidId = temp[1]
+                }
+            }
             console.log(vidId);
         } else {
             vidId = "";
