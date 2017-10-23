@@ -1,21 +1,23 @@
 "use strict";
 $(function() {
-    var youtubeUrl = "https://www.youtube.com/watch?v=";
-    var youtubeKey = "AIzaSyB3H6Fl0_1fx5DCGMJRBlubT4tSQgnFlOY";
+    const YOUTUBE_URL = "https://www.youtube.com/watch?v=";
+    const YOUTUBE_KEY = "AIzaSyB3H6Fl0_1fx5DCGMJRBlubT4tSQgnFlOY";
 
-    var googleApi = "https://www.googleapis.com/youtube/v3/captions"
-    var googleVideoApi = "http://video.google.com/timedtext"; 
+    const GOOGLE_API = "https://www.googleapis.com/youtube/v3/captions"
+    const GOOGLE_VIDEO_API = "http://video.google.com/timedtext"; 
     
-    var msURL = "https://api.microsofttranslator.com/V2/Http.svc";
-    var msKey = "8cabe1d5d90749c0ad5a7b92bfb4754f";
-    var msTokenUrl = "https://api.cognitive.microsoft.com/sts/v1.0/issueToken";
-    var token = "";
+    
+    const MS_URL = "https://api.microsofttranslator.com/V2/Http.svc";
+    const MS_KEY = "8cabe1d5d90749c0ad5a7b92bfb4754f";
+    const MS_TOKEN_URL = "https://api.cognitive.microsoft.com/sts/v1.0/issueToken";
+    let token = "";
 
-    var languageTo = "en";
-    var vidId = "";
+    const DEFAULT_LANGUAGE_TO = "en"
+    let languageTo = DEFAULT_LANGUAGE_TO;
+    let vidId = "";
 
     chrome.tabs.getSelected(null, function (tab) {
-        if (tab.url.startsWith(youtubeUrl)) {
+        if (tab.url.startsWith(YOUTUBE_URL)) {
             var query = tab.url.substring(tab.url.indexOf('?')+1);
             var params = query.split('&')
             for(var i = 0; i < params.length; i++){
@@ -27,7 +29,7 @@ $(function() {
             console.log(vidId);
         } else {
             vidId = "";
-            document.getElementById("voice_source").setAttribute("src", "");        
+            $("#voice_source").attr("src", "");        
         }
     });
 
@@ -48,30 +50,32 @@ $(function() {
         var e = document.createElement('option');
         e.value = w;
         e.innerHTML = w;
-        var langOp = document.getElementById("lang-option").appendChild(e);
+        var langOp = $("#lang-option").append(e);
     });
     $("#lang-option").val("en");    
 
     function getToken() {
         $.ajax({
             type: "POST",
-            url: msTokenUrl,
+            url: MS_TOKEN_URL,
             headers: {
-                'Ocp-Apim-Subscription-Key':msKey,
+                'Ocp-Apim-Subscription-Key':MS_KEY,
             },
             success: (result)=>{
+                console.log("token success")
                 token = result
             }  
         })
     }
 
+    //Get the original language of the video from google api server
     function getLang() {
         $.ajax({
-            url: googleApi,
+            url: GOOGLE_API,
             data: {
                 part: "snippet",
                 videoId: vidId,
-                key: youtubeKey
+                key: YOUTUBE_KEY
             },
             success: (result)=>{
                 var languageFrom = result.items[0].snippet.language;
@@ -80,12 +84,13 @@ $(function() {
         })
     }
 
+    //Get the transcript of the video
     function loadScript(languageFrom){
         $.ajax({
-            url: googleVideoApi,
+            url: GOOGLE_VIDEO_API,
             data: {
-            lang: languageFrom,
-            v: vidId
+                lang: languageFrom,
+                v: vidId
             },
             success: (result)=>{
                 var script = result.getElementsByTagName("transcript")[0]["textContent"].replace(/\n/g, " ");
@@ -103,7 +108,7 @@ $(function() {
     function translate(script){
         console.log(script)
         $.ajax({
-            url: msURL + "/Translate",
+            url: MS_URL + "/Translate",
             data: {
                 appid : "Bearer "+ token,
                 to: languageTo,
@@ -117,9 +122,10 @@ $(function() {
     }
 
     function voiceOver(translatedScript) {
-        var voice = document.getElementById("voice");
+        var voice = $('#voice')[0];
+        console.log(voice)
         voice.pause();
-        document.getElementById("voice_source").setAttribute("src", msURL + "/Speak?appid=Bearer "+ token + "&format=audio/mp3&options=male&language=" + languageTo + "&text=" + translatedScript);
+        $("#voice_source").attr("src", MS_URL + "/Speak?appid=Bearer "+ token + "&format=audio/mp3&options=male&language=" + languageTo + "&text=" + translatedScript);
         voice.load();
         voice.play();
         chrome.tabs.query({active: true, currentWindow: true}, function(tabs) {
