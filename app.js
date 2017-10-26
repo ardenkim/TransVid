@@ -17,6 +17,16 @@ $(function() {
     let vidId = "";
 
 
+    var availableLang = ["ar", "ar-eg", "ca", "ca-es", "da", "da-dk", "de", "de-de", "en", "en-au", "en-ca", "en-gb", "en-in", "en-us", "es", "es-es", "es-mx", "fi", "fi-fi", "fr", "fr-ca", "fr-fr", "hi", "hi-in", "it", "it-it", "ja", "ja-jp", "ko", "ko-kr", "nb-no", "nl", "nl-nl", "no", "pl", "pl-pl", "pt", "pt-br", "pt-pt", "ru", "ru-ru", "sv", "sv-se", "yue", "zh-chs", "zh-cht", "zh-cn", "zh-hk", "zh-tw"];
+    availableLang.forEach(function(w) {
+        var e = document.createElement('option');
+        e.value = w;
+        e.innerHTML = w;
+        var langOp = $("#lang-option").append(e);
+    });
+    $("#lang-option").val("en");    
+
+
     chrome.tabs.getSelected(null, function (tab) {
         if (tab.url.startsWith(YOUTUBE_URL)) {
             var query = tab.url.substring(tab.url.indexOf('?')+1);
@@ -37,6 +47,7 @@ $(function() {
     $("#speak").click(function() {
         if (vidId.length > 0) {
             getToken();
+            console.log("called token()")
             //getLang();    
         }
     });
@@ -46,14 +57,7 @@ $(function() {
         languageTo = $(this).val();
     });
 
-    var availableLang = ["ar", "ar-eg", "ca", "ca-es", "da", "da-dk", "de", "de-de", "en", "en-au", "en-ca", "en-gb", "en-in", "en-us", "es", "es-es", "es-mx", "fi", "fi-fi", "fr", "fr-ca", "fr-fr", "hi", "hi-in", "it", "it-it", "ja", "ja-jp", "ko", "ko-kr", "nb-no", "nl", "nl-nl", "no", "pl", "pl-pl", "pt", "pt-br", "pt-pt", "ru", "ru-ru", "sv", "sv-se", "yue", "zh-chs", "zh-cht", "zh-cn", "zh-hk", "zh-tw"];
-    availableLang.forEach(function(w) {
-        var e = document.createElement('option');
-        e.value = w;
-        e.innerHTML = w;
-        var langOp = $("#lang-option").append(e);
-    });
-    $("#lang-option").val("en");    
+    
 
     function getToken() {
         $.ajax({
@@ -63,14 +67,14 @@ $(function() {
                 'Ocp-Apim-Subscription-Key':MS_KEY,
             },
             success: (result)=>{
-                console.log("token success")
-                token = result
+                console.log("token success: " + result)
+                chrome.tabs.query({active: true, currentWindow: true}, function(tabs) {
+                    chrome.tabs.sendMessage(tabs[0].id, {videoID: vidId, lang: languageTo, tkn: result }, null);
+                    
+                  });
             }  
         })
-        chrome.tabs.query({active: true, currentWindow: true}, function(tabs) {
-            chrome.tabs.sendMessage(tabs[0].id, {videoID: vidId, lang: languageTo, tkn: token }, null);
-            
-          });
+        return token;
     }
 })
 
