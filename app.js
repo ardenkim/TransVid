@@ -16,6 +16,7 @@ $(function() {
     let languageTo = DEFAULT_LANGUAGE_TO;
     let vidId = "";
 
+
     chrome.tabs.getSelected(null, function (tab) {
         if (tab.url.startsWith(YOUTUBE_URL)) {
             var query = tab.url.substring(tab.url.indexOf('?')+1);
@@ -36,7 +37,7 @@ $(function() {
     $("#speak").click(function() {
         if (vidId.length > 0) {
             getToken();
-            getLang();    
+            //getLang();    
         }
     });
 
@@ -66,70 +67,8 @@ $(function() {
                 token = result
             }  
         })
-    }
-
-    //Get the original language of the video from google api server
-    function getLang() {
-        $.ajax({
-            url: GOOGLE_API,
-            data: {
-                part: "snippet",
-                videoId: vidId,
-                key: YOUTUBE_KEY
-            },
-            success: (result)=>{
-                var languageFrom = result.items[0].snippet.language;
-                loadScript(languageFrom)
-            }
-        })
-    }
-
-    //Get the transcript of the video
-    function loadScript(languageFrom){
-        $.ajax({
-            url: GOOGLE_VIDEO_API,
-            data: {
-                lang: languageFrom,
-                v: vidId
-            },
-            success: (result)=>{
-                var script = result.getElementsByTagName("transcript")[0]["textContent"].replace(/\n/g, " ");
-                translate(htmlDecode(script));
-            }
-        });
-    }
-
-    function htmlDecode(input){
-        var e = document.createElement('div');
-        e.innerHTML = input;
-        return e.childNodes.length === 0 ? "" : e.childNodes[0].nodeValue;
-    }
-
-    function translate(script){
-        console.log(script)
-        $.ajax({
-            url: MS_URL + "/Translate",
-            data: {
-                appid : "Bearer "+ token,
-                to: languageTo,
-                text: script
-            },
-            success: (result)=>{
-                var translatedScript = (result.getElementsByTagName('string')[0].innerHTML);
-                voiceOver(translatedScript);
-            }
-        })
-    }
-
-    function voiceOver(translatedScript) {
-        var voice = $('#voice')[0];
-        console.log(voice)
-        voice.pause();
-        $("#voice_source").attr("src", MS_URL + "/Speak?appid=Bearer "+ token + "&format=audio/mp3&options=male&language=" + languageTo + "&text=" + translatedScript);
-        voice.load();
-        voice.play();
         chrome.tabs.query({active: true, currentWindow: true}, function(tabs) {
-            chrome.tabs.sendMessage(tabs[0].id, {greeting: voice.currentTime.toString()}, null);
+            chrome.tabs.sendMessage(tabs[0].id, {videoID: vidId, lang: languageTo, tkn: token }, null);
             
           });
     }
