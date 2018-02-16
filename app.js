@@ -8,7 +8,7 @@ $(function() {
     
     
     const MS_URL = "https://api.microsofttranslator.com/V2/Http.svc";
-    const MS_KEY = "8cabe1d5d90749c0ad5a7b92bfb4754f";
+    const MS_KEY = "70c2c1de20bb422d96cdc96d4f2abcda";
     const MS_TOKEN_URL = "https://api.cognitive.microsoft.com/sts/v1.0/issueToken";
     let token = "";
 
