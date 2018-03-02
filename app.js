@@ -8,7 +8,7 @@ $(function() {
     
     
     const MS_URL = "https://api.microsofttranslator.com/V2/Http.svc";
-    const MS_KEY = "70c2c1de20bb422d96cdc96d4f2abcda";
+    const MS_KEY = "2eccce672d9d4dbf89edc26405d91df8";
     const MS_TOKEN_URL = "https://api.cognitive.microsoft.com/sts/v1.0/issueToken";
     let token = "";
 
@@ -47,7 +47,7 @@ $(function() {
     $("#speak").click(function() {
         if (vidId.length > 0) {
             getToken();
-            console.log("called token()")
+            console.log("called token()  in speak on click")
             //getLang();    
         }
     });

@@ -6,7 +6,7 @@ const GOOGLE_VIDEO_API = "https://video.google.com/timedtext";
 
 
 const MS_URL = "https://api.microsofttranslator.com/V2/Http.svc";
-const MS_KEY = "d426821a433c413ebd60cd5454ac1ae3";
+const MS_KEY = "2eccce672d9d4dbf89edc26405d91df8";
 const MS_TOKEN_URL = "https://api.cognitive.microsoft.com/sts/v1.0/issueToken";
 var token = "";
 
